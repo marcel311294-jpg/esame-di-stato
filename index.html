@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentazioni Esame di Maturità</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --border: #e2ddd6;
+    --text: #1a1814;
+    --muted: #8a8278;
+    --accent: #2d4a3e;
+    --accent-light: #e8f0ec;
+    --radius: 12px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .logo span {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 65px);
+  }
+
+  /* ── SIDEBAR ── */
+  nav {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--text);
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+    position: relative;
+  }
+
+  .nav-item:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .nav-item.active {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .nav-item .num {
+    font-size: 0.72rem;
+    opacity: 0.5;
+    min-width: 16px;
+  }
+
+  .nav-item.active .num { opacity: 0.7; }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .section-header {
+    padding: 24px 36px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .section-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── VIEWER ── */
+  .viewer-area {
+    flex: 1;
+    padding: 28px 36px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .viewer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  }
+
+  .viewer-card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #faf9f7;
+  }
+
+  .viewer-card-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .viewer-card-badge {
+    font-size: 0.7rem;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-link { background: #e8f0ec; color: #2d4a3e; }
+  .badge-file { background: #f0e8e8; color: #4a2d2d; }
+  .badge-active { background: var(--accent); color: #fff; }
+
+  iframe.presentation {
+    width: 100%;
+    height: 480px;
+    border: none;
+    display: block;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 56px 36px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .empty-icon {
+    font-size: 2.4rem;
+    margin-bottom: 14px;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .empty-desc {
+    font-size: 0.83rem;
+    line-height: 1.6;
+    max-width: 360px;
+    margin: 0 auto 20px;
+  }
+
+  /* ── EDIT MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,24,20,0.45);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    transform: translateY(12px);
+    transition: transform var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+  }
+
+  .modal-subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"], input[type="url"] {
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color var(--transition);
+    outline: none;
+  }
+
+  input:focus { border-color: var(--accent); }
+
+  .file-drop {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    font-size: 0.84rem;
+    color: var(--muted);
+  }
+
+  .file-drop:hover { border-color: var(--accent); background: var(--accent-light); }
+  .file-drop input { display: none; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 4px;
+  }
+
+  button {
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    transition: all var(--transition);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 22px;
+  }
+
+  .btn-primary:hover { background: #1e3329; }
+
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text);
+    padding: 10px 18px;
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-secondary:hover { background: var(--border); }
+
+  .btn-icon {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    border-radius: 7px;
+  }
+
+  .btn-icon:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+  /* ── PPTX VIEWER ── */
+  .pptx-placeholder {
+    width: 100%;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #faf9f7;
+    color: var(--muted);
+    gap: 12px;
+  }
+
+  .pptx-icon { font-size: 3rem; opacity: 0.4; }
+
+  .pptx-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .pptx-hint { font-size: 0.78rem; }
+
+  .download-btn {
+    margin-top: 6px;
+    background: var(--accent);
+    color: #fff;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background var(--transition);
+  }
+
+  .download-btn:hover { background: #1e3329; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .app { flex-direction: column; height: auto; }
+    nav { width: 100%; min-width: unset; flex-direction: row; flex-wrap: wrap; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); gap: 6px; }
+    .nav-label { display: none; }
+    .nav-item { padding: 8px 12px; font-size: 0.8rem; }
+    header { padding: 14px 20px; }
+    .viewer-area { padding: 16px; }
+    .section-header { padding: 16px 20px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Presentazioni <span>Esame di Maturità</span></div>
+  <div style="flex:1"></div>
+  <button class="btn-icon" onclick="openModal()">✏️ Modifica sezione</button>
+</header>
+
+<div class="app">
+  <nav id="sidebar">
+    <div class="nav-label">Sezioni</div>
+    <button class="nav-item active" onclick="setActive(0, this)"><span class="num">01</span> Presentazione personale</button>
+    <button class="nav-item" onclick="setActive(1, this)"><span class="num">02</span> PCTO 2023/2024</button>
+    <button class="nav-item" onclick="setActive(2, this)"><span class="num">03</span> PCTO 2024/2025</button>
+    <button class="nav-item" onclick="setActive(3, this)"><span class="num">04</span> PCTO 2025/2026</button>
+    <button class="nav-item" onclick="setActive(4, this)"><span class="num">05</span> Educazione civica</button>
+    <button class="nav-item" onclick="setActive(5, this)"><span class="num">06</span> Bioinformatica</button>
+  </nav>
+
+  <main>
+    <div class="section-header">
+      <div>
+        <div class="section-title" id="current-title">Presentazione personale</div>
+        <div class="section-meta" id="current-meta">Nessuna presentazione caricata</div>
+      </div>
+    </div>
+    <div class="viewer-area" id="viewer-area">
+      <!-- contenuto dinamico -->
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div>
+      <div class="modal-title" id="modal-title">Modifica sezione</div>
+      <div class="modal-subtitle">Aggiungi un link Google Slides o carica un file PPTX</div>
+    </div>
+
+    <div class="field-group">
+      <label>🔗 Link Google Slides (incorpora)</label>
+      <input type="url" id="input-link" placeholder="https://docs.google.com/presentation/d/..." />
+      <div style="font-size:0.75rem;color:var(--muted)">Vai su File → Pubblica sul web → Incorpora, copia il src dell'iframe</div>
+    </div>
+
+    <div class="divider">oppure</div>
+
+    <div class="field-group">
+      <label>📄 Carica file PPTX</label>
+      <div class="file-drop" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" accept=".pptx,.ppt,.pdf" onchange="handleFile(event)" />
+        <div style="font-size:1.6rem;margin-bottom:6px">📂</div>
+        <div>Clicca per scegliere un file</div>
+        <div style="font-size:0.74rem;margin-top:4px">PPTX, PPT, PDF</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Annulla</button>
+      <button class="btn-primary" onclick="saveSection()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sections = [
+    { title: "Presentazione personale", type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vTJKy4AyWZQI9sxBRzk5V5PjNCZD1pda1inpr7fVB4oxc04Hw1JBNywyxcDRvkoC7xEpCZu3ZE-402P/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+    { title: "PCTO 2023/2024",          type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vRB5YpzsFd99m5wxb6h3epm1GjPmzw7-e_rJbu_zQKidTctMSMMzO7ZxcJUmiLWh3ghtxy_p8dqLOsm/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+    { title: "PCTO 2024/2025",          type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vSMgtW6e1i4Qu5gY1pR-4MQfgfX3dQsFYOHhlhis-dB3DPPLUos0UDI8vGyn50dAp8s8mq6ws-mBD7R/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+    { title: "PCTO 2025/2026",          type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vTWghxmad004p-xd-pIeIg6AQYPoj98ZLZaaoy1XB8PBTPGaUjBZkT-kIeZFNseo7u11KRPDZXbaQAb/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+    { title: "Educazione civica",        type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vQck4rM6loUX32gyrnQW6KEgb3DKAVgcatwC9AJbv5ICd_zjgzqmX-cZG4ImmI2B10GaJjqw_aHkcRz/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+    { title: "Bioinformatica",           type: 'link', content: 'https://docs.google.com/presentation/d/e/2PACX-1vSqGjtwB_l9k6XMpChIm6SEjUoQOpQWEBAr8zB_DwcSJBp_qbsE_5VckQKy1PRb-G7kCyS-5zGTezyT/pubembed?start=false&loop=false&delayms=3000', fileName: null },
+  ];
+
+  let currentIndex = 0;
+  let pendingFile = null;
+
+  /* ── NAVIGAZIONE ── */
+  function setActive(index, el) {
+    currentIndex = index;
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderSection();
+  }
+
+  /* ── RENDER ── */
+  function renderSection() {
+    const s = sections[currentIndex];
+    document.getElementById('current-title').textContent = s.title;
+
+    const viewer = document.getElementById('viewer-area');
+
+    if (!s.type) {
+      document.getElementById('current-meta').textContent = 'Nessuna presentazione caricata';
+      viewer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🗂️</div>
+          <div class="empty-title">Sezione vuota</div>
+          <div class="empty-desc">Clicca su <strong>Modifica sezione</strong> in alto a destra per aggiungere un link Google Slides o caricare un file PPTX.</div>
+        </div>`;
+      return;
+    }
+
+    if (s.type === 'link') {
+      document.getElementById('current-meta').textContent = 'Presentazione Google Slides incorporata';
+      viewer.innerHTML = `
+        <div class="viewer-card">
+          <div class="viewer-card-header">
+            <span class="viewer-card-title">${s.title}</span>
+            <span class="viewer-card-badge badge-link">Google Slides</span>
+          </div>
+          <iframe class="presentation" src="${s.content}" allowfullscreen></iframe>
+        </div>`;
+    }
+
+    if (s.type === 'file') {
+      document.getElementById('current-meta').textContent = `File: ${s.fileName}`;
+      viewer.innerHTML = `
+        <div class="viewer-card">
+          <div class="viewer-card-header">
+            <span class="viewer-card-title">${s.title}</span>
+            <span class="viewer-card-badge badge-file">${s.fileName.split('.').pop().toUpperCase()}</span>
+          </div>
+          <div class="pptx-placeholder">
+            <div class="pptx-icon">📊</div>
+            <div class="pptx-name">${s.fileName}</div>
+            <div class="pptx-hint">File caricato correttamente</div>
+            <a class="download-btn" href="${s.content}" download="${s.fileName}">⬇ Scarica file</a>
+          </div>
+        </div>`;
+    }
+  }
+
+  /* ── MODAL ── */
+  function openModal() {
+    const s = sections[currentIndex];
+    document.getElementById('modal-title').textContent = `Modifica: ${s.title}`;
+    document.getElementById('input-link').value = s.type === 'link' ? s.content : '';
+    pendingFile = null;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    pendingFile = file;
+    const drop = document.querySelector('.file-drop');
+    drop.innerHTML = `<div style="font-size:1.4rem;margin-bottom:6px">✅</div><div style="font-weight:500">${file.name}</div><div style="font-size:0.74rem;margin-top:4px;color:var(--accent)">File selezionato</div>`;
+  }
+
+  function saveSection() {
+    const link = document.getElementById('input-link').value.trim();
+
+    if (pendingFile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        sections[currentIndex].type = 'file';
+        sections[currentIndex].content = e.target.result;
+        sections[currentIndex].fileName = pendingFile.name;
+        closeModal();
+        renderSection();
+      };
+      reader.readAsDataURL(pendingFile);
+      return;
+    }
+
+    if (link) {
+      // Estrae il src se l'utente incolla l'intero tag iframe
+      let src = link;
+      const match = link.match(/src="([^"]+)"/);
+      if (match) src = match[1];
+
+      sections[currentIndex].type = 'link';
+      sections[currentIndex].content = src;
+      sections[currentIndex].fileName = null;
+      closeModal();
+      renderSection();
+      return;
+    }
+
+    alert('Inserisci un link o seleziona un file prima di salvare.');
+  }
+
+  /* ── INIT ── */
+  renderSection();
+</script>
+</body>
+</html>
